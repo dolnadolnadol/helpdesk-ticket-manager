@@ -1,113 +1,336 @@
-import Image from "next/image";
+'use client'
+import { Text, Stack, Table, Badge, Button, Modal, TextInput, Container, Select, SelectItem, useMantineTheme, Image, Grid, Textarea } from '@mantine/core';
+import NavbarTemp from '@/app/components/common/navbar';
+import { useEffect, useState } from 'react';
+import { createTicket, getHello, getTicket, getTicketById, updateTicket } from '@/app/api/ticket/ticket'
+import { Iticket, Ticket, UTicket } from '@/model/ticket/ticket';
+import { useDisclosure } from '@mantine/hooks';
+import Loading from './components/common/loading/page';
+import {
+  generateDateTime,
+} from "@/util/utility-func";
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+  const theme = useMantineTheme();
+  const [ticket, setTicket] = useState<Ticket[]>();
+  const [ticketEdit, setTicketEdit] = useState<Ticket>();
+  const [opened, { open, close }] = useDisclosure(false);
+  const [openedEdit, { open: openedit, close: closeedit }] = useDisclosure(false);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [tid, settid] = useState<number>(0);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [contact, setContact] = useState<string>('');
+  const [status, setStatus] = useState<string>('');
+  const states: SelectItem[] = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'accepted', label: 'Accepted' },
+    { value: 'resolved', label: 'Resolved' },
+    { value: 'rejected', label: 'Rejected' }
+  ];
+
+
+  const rowsPending = ticket && ticket.map((element) => {
+    if (element.status === "pending") {
+      return (
+        <tr key={element.id}>
+          <td>{element.id}</td>
+          <td>{element.title}</td>
+          <td>{element.contact}</td>
+          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+          <td><Badge color="yellow">{element.status}</Badge></td>
+          <td>
+            <button onClick={() => showEdit(element.id)}>
+              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+            </button>
+          </td>
+        </tr>
+      );
+    }
+  });
+  const rowsAccept = ticket && ticket.map((element) => {
+    if (element.status === "accepted") {
+      return (
+        <tr key={element.id}>
+          <td>{element.id}</td>
+          <td>{element.title}</td>
+          <td>{element.contact}</td>
+          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+          <td><Badge color="indigo">{element.status}</Badge></td>
+          <td>
+            <button onClick={() => showEdit(element.id)}>
+              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+            </button>
+          </td>
+        </tr>
+      );
+    }
+  });
+  const rowsresolved = ticket && ticket.map((element) => {
+    if (element.status === "resolved") {
+      return (
+        <tr key={element.id}>
+          <td>{element.id}</td>
+          <td>{element.title}</td>
+          <td>{element.contact}</td>
+          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+          <td><Badge color="green">{element.status}</Badge></td>
+          <td>
+            <button onClick={() => showEdit(element.id)}>
+              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+            </button>
+          </td>
+        </tr>
+      );
+    }
+  });
+  const rowsreject = ticket && ticket.map((element) => {
+    if (element.status === "rejected") {
+      return (
+        <tr key={element.id}>
+          <td>{element.id}</td>
+          <td>{element.title}</td>
+          <td>{element.contact}</td>
+          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+          <td><Badge color="red">{element.status}</Badge></td>
+          <td>
+            <button onClick={() => showEdit(element.id)}>
+              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+            </button>
+          </td>
+        </tr>
+      );
+    }
+  });
+  const showEdit = async (id: number) => {
+    GetTicketById(id);
+    openedit();
+  }
+  const GetHello = async () => {
+    const response = await getTicket();
+    setTicket(response);
+  }
+  const GetTicketById = async (id: number) => {
+    await getTicketById(id).then((response) => {
+      setTicketEdit(response);
+      settid(response.id);
+      setContact(response.contact);
+      setTitle(response.title);
+      setDescription(response.description);
+      setStatus(response.status);
+    })
+  }
+  const saveTicket = async () => {
+    const ticket: Iticket = {
+      title: title,
+      description: description,
+      contact: contact,
+      status: "pending"
+    }
+    try {
+      await createTicket(ticket);
+      await GetHello();
+      close();
+    } catch (error) {
+      console.error("Error creating ticket:", error);
+    }
+  }
+
+  const UpdateTicket = async () => {
+    const formatDate = generateDateTime();
+    const ticket: UTicket = {
+      id: tid,
+      title: title,
+      description: description,
+      contact: contact,
+      update_Timestamp: formatDate,
+      status: status
+    }
+    try {
+      await updateTicket(ticket);
+      await GetHello();
+      closeedit();
+    } catch (error) {
+      console.error("Error creating ticket:", error);
+    }
+  }
+
+  useEffect(() => {
+    GetHello();
+    setLoading(false);
+  }, [])
+
+  if (isLoading) return <Loading />;
+  else
+    return (
+      <NavbarTemp>
+        <>
+          <Button onClick={open} >
+            Add Ticket
+          </Button>
+          <Modal opened={opened} onClose={close} title="Add Ticket" centered>
+            <TextInput
+              placeholder="Title"
+              label="Title"
+              withAsterisk
+              onChange={(evnet) => {
+                setTitle(evnet.target.value)
+              }}
             />
-          </a>
-        </div>
-      </div>
+            <Textarea
+              placeholder="Description"
+              label="Description"
+              withAsterisk
+              autosize
+              minRows={2}
+              maxRows={4}
+              onChange={(evnet) => {
+                setDescription(evnet.target.value)
+              }}
+            />
+            <TextInput
+              placeholder="Contact"
+              label="Contact"
+              withAsterisk
+              onChange={(evnet) => {
+                setContact(evnet.target.value)
+              }}
+            />
+            <Button mt={15} onClick={saveTicket}>
+              SAVE
+            </Button>
+          </Modal>
+          <Modal opened={openedEdit} onClose={closeedit} title="edit Ticket"
+            overlayProps={{
+              color: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+              opacity: 0.55,
+              blur: 3,
+            }}
+            centered
+          >
+            <TextInput
+              placeholder="Title"
+              label="Title"
+              withAsterisk
+              value={title}
+              onChange={(evnet) => {
+                setTitle(evnet.target.value)
+              }}
+            />
+            <Textarea
+              placeholder="Description"
+              label="Description"
+              withAsterisk
+              autosize
+              minRows={2}
+              maxRows={4}
+              value={description}
+              onChange={(event) => {
+                setDescription(event.target.value)
+              }}
+            />
+            <TextInput
+              placeholder="Contact"
+              label="Contact"
+              withAsterisk
+              value={contact}
+              onChange={(evnet) => {
+                setContact(evnet.target.value)
+              }}
+            />
+            <Select
+              label="Status"
+              placeholder={ticketEdit?.status}
+              value={status}
+              data={states}
+              onChange={(selectedStatus) => {
+                if (typeof selectedStatus === 'string') {
+                  setStatus(selectedStatus);
+                }
+              }}
+            />
+            <Button mt={15} onClick={UpdateTicket}>
+              SAVE
+            </Button>
+          </Modal>
+          <Grid grow gutter="xl" columns={12} style={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid.Col lg={12} xl={5}>
+              <Text>PENDING</Text>
+              <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflow: "auto" }}>
+                <Table withBorder>
+                  <thead>
+                    <tr>
+                      <th>Ticket Id</th>
+                      <th>Title</th>
+                      <th>Contact</th>
+                      <th>Create Time</th>
+                      <th>status</th>
+                      <th>edit</th>
+                    </tr>
+                  </thead>
+                  <tbody>{rowsPending}</tbody>
+                </Table>
+              </Container>
+            </Grid.Col>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+            <Grid.Col lg={12} xl={5}>
+              <Text>ACCEPTED</Text>
+              <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflow: "auto" }}>
+                <Table withBorder>
+                  <thead>
+                    <tr>
+                      <th>Ticket Id</th>
+                      <th>Title</th>
+                      <th>Contact</th>
+                      <th>Create Time</th>
+                      <th>status</th>
+                      <th>edit</th>
+                    </tr>
+                  </thead>
+                  <tbody>{rowsAccept}</tbody>
+                </Table>
+              </Container>
+            </Grid.Col>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+            <Grid.Col lg={12} xl={5}>
+              <Text>RESOLVED</Text>
+              <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflow: "auto" }}>
+                <Table withBorder>
+                  <thead>
+                    <tr>
+                      <th>Ticket Id</th>
+                      <th>Title</th>
+                      <th>Contact</th>
+                      <th>Create Time</th>
+                      <th>status</th>
+                      <th>edit</th>
+                    </tr>
+                  </thead>
+                  <tbody>{rowsresolved}</tbody>
+                </Table>
+              </Container>
+            </Grid.Col>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+            <Grid.Col lg={12} xl={5}>
+              <Text>REJECTED</Text>
+              <Container h={{ lg: "10vh", xl: "30vh" }} style={{ overflow: "auto" }}>
+                <Table withBorder>
+                  <thead>
+                    <tr>
+                      <th>Ticket Id</th>
+                      <th>Title</th>
+                      <th>Contact</th>
+                      <th>Create Time</th>
+                      <th>status</th>
+                      <th>edit</th>
+                    </tr>
+                  </thead>
+                  <tbody>{rowsreject}</tbody>
+                </Table>
+              </Container>
+            </Grid.Col>
+          </Grid>
+        </>
+      </NavbarTemp>
+    );
 }
