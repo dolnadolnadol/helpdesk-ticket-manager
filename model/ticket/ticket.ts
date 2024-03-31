@@ -10,7 +10,7 @@ export interface Ticket {
     description : string,
     contact : string,
     Create_Timestamp : string,
-    update_Timestamp : string | null | undefined,
+    Update_Timestamp : string | null,
     status : string,
 }
 

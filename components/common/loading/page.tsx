@@ -1,4 +1,4 @@
-import styles from "@/app/components/common/loading/styles.module.css";
+import styles from "@/components/common/loading/styles.module.css";
 export default function Loading() {
   return (
     <div className={styles["custom-loading-background"]}>

@@ -1,14 +1,25 @@
 import executeQuery from "@/lib/db";
 import { Ticket } from "@/model/ticket/ticket";
+import dotenv from 'dotenv';
+dotenv.config();
+
+function authenticateRequest(request: Request) {
+    const apiKey = request.headers.get("api-key");
+    console.log(apiKey);
+    if (!apiKey || apiKey !== process.env.API_KEY) {
+        throw new Response("Unauthorize", { status: 401 });
+    }
+}
 
 export async function GET(request: Request) {
     try {
+        authenticateRequest(request);
         const url = new URL(request.url);
         const pathname = url.pathname;
         const ticketId = pathname.split('/').pop();
         if (ticketId) {
             const result = await executeQuery({
-                query: 'SELECT * FROM ticket WHERE id = ? Limit 1',
+                query: 'SELECT * FROM ticket WHERE id = ? ORDER BY id DESC LIMIT 1',
                 values: [ticketId]
             });
             console.log(result);

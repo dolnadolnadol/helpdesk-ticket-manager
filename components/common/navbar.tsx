@@ -8,7 +8,6 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { ContentProps } from "@/model/layout/content";
-import { redirect } from 'next/dist/server/api-utils';
 
 export default function NavbarTemp(props: ContentProps) {
   const theme = useMantineTheme();

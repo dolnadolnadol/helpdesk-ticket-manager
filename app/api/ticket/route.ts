@@ -1,14 +1,21 @@
-import { NextResponse } from "next/server";
-import executeQuery from "@/lib/db";
-import { Iticket, Ticket, UTicket } from "@/model/ticket/ticket";
+import executeQuery, { testDatabaseConnection } from "@/lib/db";
+import { Iticket, UTicket } from "@/model/ticket/ticket";
+
+function authenticateRequest(request: Request) {
+    const apiKey = request.headers.get("api-key");
+    if (!apiKey || apiKey !== process.env.API_KEY) {
+        throw new Response("Unauthorize", { status: 401 });
+    }
+
+}
 
 export async function GET(request: Request) {
     try {
+        authenticateRequest(request);
         const result = await executeQuery({
             query: 'SELECT * FROM ticket',
         });
-        // console.log(result);
-        
+        console.log(result);
         return new Response(JSON.stringify(result), {
             headers: {
                 "Content-Type": "application/json",
@@ -16,12 +23,13 @@ export async function GET(request: Request) {
         });
     } catch (error) {
         console.log(error);
-        return new Response("Internal Server Error", { status: 500 });
+        return new Response(JSON.stringify("Internal Server Error"), { status: 500 });
     }
 }
  
 export async function POST(request: Request) {
     try {
+        authenticateRequest(request);
         const body = await request.json();
         const context: Iticket = body;
         if (!context.title || !context.description || !context.contact || !context.status) {
@@ -42,6 +50,7 @@ export async function POST(request: Request) {
  
 export async function PUT(request: Request) {
     try {
+        authenticateRequest(request);
         const body = await request.json();
         const context: UTicket = body;
         if (!context.id) {

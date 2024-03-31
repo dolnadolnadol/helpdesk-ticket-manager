@@ -1,19 +1,17 @@
 import { Iticket, UTicket } from "@/model/ticket/ticket";
-
-export async function getHello() {
-    try {
-        const response = await fetch("http://localhost:3000/api/ticket");
-        const data = await response.json();
-        return data; // Return the fetched data
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return null; // Return null in case of an error
-    }
-}
+import dotenv from 'dotenv';
+dotenv.config();
 
 export async function getTicket() {
     try {
-        const response = await fetch("http://localhost:3000/api/ticket");
+        const response = await fetch("http://localhost:3000/api/ticket",
+        {
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+                'api-key': `${process.env.NEXT_PUBLIC_API_KEY}`,
+            }
+        });
         
         if (!response.ok) {
             throw new Error('Failed to fetch data');
@@ -29,8 +27,14 @@ export async function getTicket() {
 
 export async function getTicketById(id: number) {
     try {
-        const response = await fetch(`http://localhost:3000/api/ticket/${id}`);
-        
+        const response = await fetch(`http://localhost:3000/api/ticket/${id}`,
+        {
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+                'api-key': `${process.env.NEXT_PUBLIC_API_KEY}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
@@ -48,7 +52,8 @@ export async function createTicket(ticketData : Iticket) {
         const response = await fetch("http://localhost:3000/api/ticket", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'api-key': `${process.env.NEXT_PUBLIC_API_KEY}`
             },
             body: JSON.stringify(ticketData)
         });
@@ -65,7 +70,8 @@ export async function updateTicket(ticketData : UTicket) {
         const response = await fetch("http://localhost:3000/api/ticket", {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'api-key': `${process.env.NEXT_PUBLIC_API_KEY}`
             },
             body: JSON.stringify(ticketData)
         });

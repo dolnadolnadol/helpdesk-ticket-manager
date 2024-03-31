@@ -1,11 +1,11 @@
 'use client'
-import { Text, Stack, Table, Badge, Button, Modal, TextInput, Container, Select, SelectItem, useMantineTheme, Image, Grid, Textarea } from '@mantine/core';
-import NavbarTemp from '@/app/components/common/navbar';
+import { Text, Table, Badge, Button, Modal, TextInput, Container, Select, SelectItem, useMantineTheme, Image, Grid, Textarea, Card, Box, MediaQuery } from '@mantine/core';
+import NavbarTemp from '@/components/common/navbar';
 import { useEffect, useState } from 'react';
-import { createTicket, getHello, getTicket, getTicketById, updateTicket } from '@/app/api/ticket/ticket'
+import { createTicket, getTicket, getTicketById, updateTicket } from '@/app/api/ticket/ticket'
 import { Iticket, Ticket, UTicket } from '@/model/ticket/ticket';
 import { useDisclosure } from '@mantine/hooks';
-import Loading from './components/common/loading/page';
+import Loading from '@/components/common/loading/page';
 import {
   generateDateTime,
 } from "@/util/utility-func";
@@ -35,13 +35,27 @@ export default function Home() {
       return (
         <tr key={element.id}>
           <td>{element.id}</td>
-          <td>{element.title}</td>
-          <td>{element.contact}</td>
-          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td><Badge color="yellow">{element.status}</Badge></td>
+          <td>
+            <Box w={110}>
+              <Text truncate lineClamp={2}>{element.title}</Text>
+            </Box>
+          </td>
+          <td>
+            <Box w={180}>
+              <Text truncate>{element.contact}</Text>
+            </Box>
+          </td>
+          <td>
+            <Box>
+              {new Date(element.Create_Timestamp).toLocaleString()}
+            </Box>
+          </td>
+          <td>
+              <Badge variant="filled" color="yellow">{element.status}</Badge>
+          </td>
           <td>
             <button onClick={() => showEdit(element.id)}>
-              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
             </button>
           </td>
         </tr>
@@ -53,13 +67,23 @@ export default function Home() {
       return (
         <tr key={element.id}>
           <td>{element.id}</td>
-          <td>{element.title}</td>
-          <td>{element.contact}</td>
+          <td>
+            <Box w={60}>
+              <Text truncate>{element.title}</Text>
+            </Box>
+          </td>
+
+          <td>
+            <Box w={100}>
+              <Text truncate>{element.contact}</Text>
+            </Box>
+          </td>
           <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td><Badge color="indigo">{element.status}</Badge></td>
+          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
+          <td><Badge variant="filled" color="indigo">{element.status}</Badge></td>
           <td>
             <button onClick={() => showEdit(element.id)}>
-              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
             </button>
           </td>
         </tr>
@@ -71,13 +95,23 @@ export default function Home() {
       return (
         <tr key={element.id}>
           <td>{element.id}</td>
-          <td>{element.title}</td>
-          <td>{element.contact}</td>
+          <td>
+            <Box w={60}>
+              <Text truncate >{element.title}</Text>
+            </Box>
+          </td>
+
+          <td>
+            <Box w={100}>
+              <Text truncate>{element.contact}</Text>
+            </Box>
+          </td>
           <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td><Badge color="green">{element.status}</Badge></td>
+          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
+          <td><Badge variant="filled" color="green">{element.status}</Badge></td>
           <td>
             <button onClick={() => showEdit(element.id)}>
-              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
             </button>
           </td>
         </tr>
@@ -89,13 +123,22 @@ export default function Home() {
       return (
         <tr key={element.id}>
           <td>{element.id}</td>
-          <td>{element.title}</td>
-          <td>{element.contact}</td>
+          <td>
+            <Box w={60}>
+              <Text truncate>{element.title}</Text>
+            </Box>
+          </td>
+          <td>
+            <Box w={100}>
+              <Text truncate>{element.contact}</Text>
+            </Box>
+          </td>
           <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td><Badge color="red">{element.status}</Badge></td>
+          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
+          <td><Badge variant="filled" color="red">{element.status}</Badge></td>
           <td>
             <button onClick={() => showEdit(element.id)}>
-              <Image src='/edit.jpg' style={{ display: 'flex', justifyContent: 'center', width: '20px', height: '20px' }}></Image>
+              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
             </button>
           </td>
         </tr>
@@ -165,171 +208,206 @@ export default function Home() {
     return (
       <NavbarTemp>
         <>
-          <Button onClick={open} >
-            Add Ticket
-          </Button>
-          <Modal opened={opened} onClose={close} title="Add Ticket" centered>
-            <TextInput
-              placeholder="Title"
-              label="Title"
-              withAsterisk
-              onChange={(evnet) => {
-                setTitle(evnet.target.value)
-              }}
-            />
-            <Textarea
-              placeholder="Description"
-              label="Description"
-              withAsterisk
-              autosize
-              minRows={2}
-              maxRows={4}
-              onChange={(evnet) => {
-                setDescription(evnet.target.value)
-              }}
-            />
-            <TextInput
-              placeholder="Contact"
-              label="Contact"
-              withAsterisk
-              onChange={(evnet) => {
-                setContact(evnet.target.value)
-              }}
-            />
-            <Button mt={15} onClick={saveTicket}>
-              SAVE
+          <Container size="95%">
+            <Button onClick={open} my={20} >
+              Create Ticket
             </Button>
-          </Modal>
-          <Modal opened={openedEdit} onClose={closeedit} title="edit Ticket"
-            overlayProps={{
-              color: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
-              opacity: 0.55,
-              blur: 3,
-            }}
-            centered
-          >
-            <TextInput
-              placeholder="Title"
-              label="Title"
-              withAsterisk
-              value={title}
-              onChange={(evnet) => {
-                setTitle(evnet.target.value)
+            <Modal opened={opened} onClose={close} title="Create Ticket" centered>
+              <TextInput
+                placeholder="Title"
+                label="Title"
+                mb={10}
+                withAsterisk
+                onChange={(evnet) => {
+                  setTitle(evnet.target.value)
+                }}
+              />
+              <Textarea
+                placeholder="Description"
+                label="Description"
+                withAsterisk
+                autosize
+                mb={10}
+                minRows={2}
+                maxRows={4}
+                onChange={(evnet) => {
+                  setDescription(evnet.target.value)
+                }}
+              />
+              <TextInput
+                placeholder="example@dolphin.com"
+                label="Contact"
+                withAsterisk
+                mb={10}
+                onChange={(evnet) => {
+                  setContact(evnet.target.value)
+                }}
+              />
+              <Button mt={15} onClick={saveTicket}>
+                SAVE
+              </Button>
+            </Modal>
+            <Modal opened={openedEdit} onClose={closeedit} title="Detail Ticket"
+              overlayProps={{
+                color: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+                opacity: 0.55,
+                blur: 3,
               }}
-            />
-            <Textarea
-              placeholder="Description"
-              label="Description"
-              withAsterisk
-              autosize
-              minRows={2}
-              maxRows={4}
-              value={description}
-              onChange={(event) => {
-                setDescription(event.target.value)
-              }}
-            />
-            <TextInput
-              placeholder="Contact"
-              label="Contact"
-              withAsterisk
-              value={contact}
-              onChange={(evnet) => {
-                setContact(evnet.target.value)
-              }}
-            />
-            <Select
-              label="Status"
-              placeholder={ticketEdit?.status}
-              value={status}
-              data={states}
-              onChange={(selectedStatus) => {
-                if (typeof selectedStatus === 'string') {
-                  setStatus(selectedStatus);
-                }
-              }}
-            />
-            <Button mt={15} onClick={UpdateTicket}>
-              SAVE
-            </Button>
-          </Modal>
-          <Grid grow gutter="xl" columns={12} style={{ display: 'flex', justifyContent: 'center' }}>
-            <Grid.Col lg={12} xl={5}>
-              <Text>PENDING</Text>
-              <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflow: "auto" }}>
-                <Table withBorder>
-                  <thead>
-                    <tr>
-                      <th>Ticket Id</th>
-                      <th>Title</th>
-                      <th>Contact</th>
-                      <th>Create Time</th>
-                      <th>status</th>
-                      <th>edit</th>
-                    </tr>
-                  </thead>
-                  <tbody>{rowsPending}</tbody>
-                </Table>
-              </Container>
-            </Grid.Col>
+              centered
+            >
+              <TextInput
+                placeholder="Title"
+                label="Title"
+                value={title}
+                mb={10}
+                // disabled
+                variant='filled'
+              // bg="white"
+              // onChange={(evnet) => {
+              //   setTitle(evnet.target.value)
+              // }}
+              />
+              <Textarea
+                placeholder="Description"
+                label="Description"
+                autosize
+                mb={10}
+                minRows={2}
+                maxRows={4}
+                variant='filled'
+                value={description}
+              // onChange={(event) => {
+              //   setDescription(event.target.value)
+              // }}
+              />
+              <TextInput
+                placeholder="Contact"
+                label="Contact"
+                mb={10}
+                variant='filled'
+                value={contact}
+              // onChange={(evnet) => {
+              //   setContact(evnet.target.value)
+              // }}
+              />
+              <Select
+                label="Update Status"
+                placeholder={ticketEdit?.status}
+                value={status}
+                data={states}
+                onChange={(selectedStatus) => {
+                  if (typeof selectedStatus === 'string') {
+                    setStatus(selectedStatus);
+                  }
+                }}
+              />
+              <Button mt={15} onClick={UpdateTicket}>
+                SAVE
+              </Button>
+            </Modal>
+            <Grid grow gutter="lg" columns={12} style={{ display: 'flex', justifyContent: 'center' }}>
+              <Grid.Col lg={12} xl={5}>
+                <Card shadow="sm" padding="lg" radius="lg" withBorder>
+                  <Text ml={20} fw={900} mb={5} fz="xl" variant="gradient"
+                    gradient={{ from: 'orange', to: 'yellow', deg: 90 }}
+                    sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>PENDING</Text>
+                  <Container h={{ md:"10vh", lg: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                  <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+                    <Table mt={15} highlightOnHover withColumnBorders style={{ fontFamily: 'Noto Sans Thai' }}>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Title</th>
+                          <th>Contact</th>
+                          <th>Create Time</th>
+                          <th>status</th>
+                          <th>view</th>
+                        </tr>
+                      </thead>
+                      <tbody>{rowsPending}</tbody>
+                    </Table>
+                  </MediaQuery>
+                  
+                  {/* <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+                  
+                  </MediaQuery> */}
+                    </Container>
+                </Card>
+              </Grid.Col>
 
-            <Grid.Col lg={12} xl={5}>
-              <Text>ACCEPTED</Text>
-              <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflow: "auto" }}>
-                <Table withBorder>
-                  <thead>
-                    <tr>
-                      <th>Ticket Id</th>
-                      <th>Title</th>
-                      <th>Contact</th>
-                      <th>Create Time</th>
-                      <th>status</th>
-                      <th>edit</th>
-                    </tr>
-                  </thead>
-                  <tbody>{rowsAccept}</tbody>
-                </Table>
-              </Container>
-            </Grid.Col>
+              <Grid.Col lg={12} xl={5}>
+                <Card shadow="sm" padding="lg" radius="lg" withBorder>
+                  <Text ml={20} fw={900} fz="xl" variant="gradient"
+                    gradient={{ from: 'blue', to: 'purple', deg: 90 }}
+                    sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>ACCEPTED</Text>
+                  <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                    {/* <Table mt={15} highlightOnHover withColumnBorders>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Title</th>
+                          <th>Contact</th>
+                          <th>Create Time</th>
+                          <th>Update Time</th>
+                          <th>status</th>
+                          <th>view</th>
+                        </tr>
+                      </thead>
+                      <tbody>{rowsAccept}</tbody>
+                    </Table> */}
+                  </Container>
+                </Card>
+              </Grid.Col>
 
-            <Grid.Col lg={12} xl={5}>
-              <Text>RESOLVED</Text>
-              <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflow: "auto" }}>
-                <Table withBorder>
-                  <thead>
-                    <tr>
-                      <th>Ticket Id</th>
-                      <th>Title</th>
-                      <th>Contact</th>
-                      <th>Create Time</th>
-                      <th>status</th>
-                      <th>edit</th>
-                    </tr>
-                  </thead>
-                  <tbody>{rowsresolved}</tbody>
-                </Table>
-              </Container>
-            </Grid.Col>
+              <Grid.Col lg={12} xl={5}>
+                <Card shadow="sm" padding="lg" radius="lg" withBorder>
+                  <Text ml={20} fw={900} fz="xl" variant="gradient"
+                    gradient={{ from: 'green', to: 'blue', deg: 90 }}
+                    sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>RESOLVED</Text>
+                  <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                    {/* <Table mt={15} highlightOnHover withColumnBorders>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Title</th>
+                          <th>Contact</th>
+                          <th>Create Time</th>
+                          <th>Update Time</th>
+                          <th>status</th>
+                          <th>view</th>
+                        </tr>
+                      </thead>
+                      <tbody>{rowsresolved}</tbody>
+                    </Table> */}
+                  </Container>
+                </Card>
+              </Grid.Col>
 
-            <Grid.Col lg={12} xl={5}>
-              <Text>REJECTED</Text>
-              <Container h={{ lg: "10vh", xl: "30vh" }} style={{ overflow: "auto" }}>
-                <Table withBorder>
-                  <thead>
-                    <tr>
-                      <th>Ticket Id</th>
-                      <th>Title</th>
-                      <th>Contact</th>
-                      <th>Create Time</th>
-                      <th>status</th>
-                      <th>edit</th>
-                    </tr>
-                  </thead>
-                  <tbody>{rowsreject}</tbody>
-                </Table>
-              </Container>
-            </Grid.Col>
-          </Grid>
+              <Grid.Col lg={12} xl={5}>
+                <Card shadow="sm" padding="lg" radius="lg" withBorder>
+                  <Text ml={20} fw={900} fz="xl" variant="gradient"
+                    gradient={{ from: 'red', to: 'black', deg: 175 }}
+                    sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>REJECTED</Text>
+                  <Container h={{ lg: "10vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                    {/* <Table mt={15} highlightOnHover withColumnBorders>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Title</th>
+                          <th>Contact</th>
+                          <th>Create Time</th>
+                          <th>Update Time</th>
+                          <th>status</th>
+                          <th>view</th>
+                        </tr>
+                      </thead>
+                      <tbody>{rowsreject}</tbody>
+                    </Table> */}
+                  </Container>
+                </Card>
+              </Grid.Col>
+            </Grid>
+          </Container>
         </>
       </NavbarTemp>
     );
