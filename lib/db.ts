@@ -25,16 +25,16 @@ export default async function excuteQuery({ query, values } : {query: string, va
   }
 }
 
-export async function testDatabaseConnection() {
-  try {
-    // Replace this query with a simple query that you expect to return some results
-    const query = 'SELECT * FROM ticket LIMIT 1';
-    const results = await excuteQuery({ query });
-    console.log('Database connection is working:', results);
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-  }
-}
+// export async function testDatabaseConnection() {
+//   try {
+//     // Replace this query with a simple query that you expect to return some results
+//     const query = 'SELECT * FROM ticket LIMIT 1';
+//     const results = await excuteQuery({ query });
+//     console.log('Database connection is working:', results);
+//   } catch (error) {
+//     console.error('Error connecting to the database:', error);
+//   }
+// }
 
-// Call the test function
-testDatabaseConnection();
+// // Call the test function
+// testDatabaseConnection();

@@ -5,7 +5,6 @@ dotenv.config();
 
 function authenticateRequest(request: Request) {
     const apiKey = request.headers.get("api-key");
-    console.log(apiKey);
     if (!apiKey || apiKey !== process.env.API_KEY) {
         throw new Response("Unauthorize", { status: 401 });
     }
@@ -19,10 +18,10 @@ export async function GET(request: Request) {
         const ticketId = pathname.split('/').pop();
         if (ticketId) {
             const result = await executeQuery({
-                query: 'SELECT * FROM ticket WHERE id = ? ORDER BY id DESC LIMIT 1',
+                query: 'SELECT * FROM ticket WHERE id = ? LIMIT 1',
                 values: [ticketId]
             });
-            console.log(result);
+            // console.log(result);
             const typedResult = result as Ticket[];
             
             if (typedResult.length === 0) {

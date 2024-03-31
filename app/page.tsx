@@ -33,115 +33,230 @@ export default function Home() {
   const rowsPending = ticket && ticket.map((element) => {
     if (element.status === "pending") {
       return (
-        <tr key={element.id}>
-          <td>{element.id}</td>
-          <td>
-            <Box w={110}>
-              <Text truncate lineClamp={2}>{element.title}</Text>
-            </Box>
-          </td>
-          <td>
-            <Box w={180}>
-              <Text truncate>{element.contact}</Text>
-            </Box>
-          </td>
-          <td>
-            <Box>
-              {new Date(element.Create_Timestamp).toLocaleString()}
-            </Box>
-          </td>
-          <td>
-              <Badge variant="filled" color="yellow">{element.status}</Badge>
-          </td>
-          <td>
-            <button onClick={() => showEdit(element.id)}>
-              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
-            </button>
-          </td>
-        </tr>
+        <>
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={110}>
+                  <Text truncate>{element.title}</Text>
+                </Box>
+              </td>
+              <td>
+                <Box w={150}>
+                  <Text truncate>{element.contact}</Text>
+                </Box>
+              </td>
+              <td>
+                <Box>
+                  {new Date(element.Create_Timestamp).toLocaleString()}
+                </Box>
+              </td>
+              <td>
+                <Badge variant="filled" color="yellow">{element.status}</Badge>
+              </td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+          <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={{ base: 80, sm: 140 }}>
+                  <Text truncate lineClamp={2}>{element.title}</Text>
+                </Box>
+              </td>
+              {/* <td>
+                <Box w={180}>
+                  <Text truncate>{element.contact}</Text>
+                </Box>
+              </td>
+              <td>
+                <Box>
+                  {new Date(element.Create_Timestamp).toLocaleString()}
+                </Box>
+              </td> */}
+              <td>
+                <Badge variant="filled" color="yellow">{element.status}</Badge>
+              </td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+        </>
       );
     }
   });
   const rowsAccept = ticket && ticket.map((element) => {
     if (element.status === "accepted") {
       return (
-        <tr key={element.id}>
-          <td>{element.id}</td>
-          <td>
-            <Box w={60}>
-              <Text truncate>{element.title}</Text>
-            </Box>
-          </td>
+        <>
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={60}>
+                  <Text truncate>{element.title}</Text>
+                </Box>
+              </td>
 
-          <td>
+              <td>
+                <Box w={100}>
+                  <Text truncate>{element.contact}</Text>
+                </Box>
+              </td>
+              <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+              <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
+              <td><Badge variant="filled" color="indigo">{element.status}</Badge></td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+          <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={{ base: 80, sm: 140 }}>
+                  <Text truncate>{element.title}</Text>
+                </Box>
+              </td>
+              {/* <td>
             <Box w={100}>
               <Text truncate>{element.contact}</Text>
             </Box>
           </td>
           <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
-          <td><Badge variant="filled" color="indigo">{element.status}</Badge></td>
-          <td>
-            <button onClick={() => showEdit(element.id)}>
-              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
-            </button>
-          </td>
-        </tr>
+          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td> */}
+              <td><Badge variant="filled" color="indigo">{element.status}</Badge></td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+        </>
       );
     }
   });
   const rowsresolved = ticket && ticket.map((element) => {
     if (element.status === "resolved") {
       return (
-        <tr key={element.id}>
-          <td>{element.id}</td>
-          <td>
-            <Box w={60}>
-              <Text truncate >{element.title}</Text>
-            </Box>
-          </td>
+        <>
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={60}>
+                  <Text truncate >{element.title}</Text>
+                </Box>
+              </td>
 
-          <td>
+              <td>
+                <Box w={100}>
+                  <Text truncate>{element.contact}</Text>
+                </Box>
+              </td>
+              <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+              <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
+              <td><Badge variant="filled" color="green">{element.status}</Badge></td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+          <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={{ base: 80, sm: 140 }}>
+                  <Text truncate >{element.title}</Text>
+                </Box>
+              </td>
+
+              {/* <td>
             <Box w={100}>
               <Text truncate>{element.contact}</Text>
             </Box>
           </td>
           <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
-          <td><Badge variant="filled" color="green">{element.status}</Badge></td>
-          <td>
-            <button onClick={() => showEdit(element.id)}>
-              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
-            </button>
-          </td>
-        </tr>
+          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td> */}
+              <td><Badge variant="filled" color="green">{element.status}</Badge></td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+        </>
       );
     }
   });
   const rowsreject = ticket && ticket.map((element) => {
     if (element.status === "rejected") {
       return (
-        <tr key={element.id}>
-          <td>{element.id}</td>
-          <td>
-            <Box w={60}>
-              <Text truncate>{element.title}</Text>
-            </Box>
-          </td>
-          <td>
+        <>
+          <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={60}>
+                  <Text truncate>{element.title}</Text>
+                </Box>
+              </td>
+              <td>
+                <Box w={100}>
+                  <Text truncate>{element.contact}</Text>
+                </Box>
+              </td>
+              <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
+              <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
+              <td><Badge variant="filled" color="red">{element.status}</Badge></td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+          <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+            <tr key={element.id}>
+              <td>{element.id}</td>
+              <td>
+                <Box w={{ base: 80, sm: 140 }}>
+                  <Text truncate >{element.title}</Text>
+                </Box>
+              </td>
+
+              {/* <td>
             <Box w={100}>
               <Text truncate>{element.contact}</Text>
             </Box>
           </td>
           <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
-          <td><Badge variant="filled" color="red">{element.status}</Badge></td>
-          <td>
-            <button onClick={() => showEdit(element.id)}>
-              <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
-            </button>
-          </td>
-        </tr>
+          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td> */}
+              <td><Badge variant="filled" color="red">{element.status}</Badge></td>
+              <td>
+                <button onClick={() => showEdit(element.id)}>
+                  <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
+                </button>
+              </td>
+            </tr>
+          </MediaQuery>
+        </>
       );
     }
   });
@@ -172,7 +287,8 @@ export default function Home() {
     }
     try {
       await createTicket(ticket);
-      await GetHello();
+      // await GetHello();
+      await fetch('/')
       close();
     } catch (error) {
       console.error("Error creating ticket:", error);
@@ -190,6 +306,7 @@ export default function Home() {
       status: status
     }
     try {
+      console.log('fomatdatte '+formatDate);
       await updateTicket(ticket);
       await GetHello();
       closeedit();
@@ -208,7 +325,7 @@ export default function Home() {
     return (
       <NavbarTemp>
         <>
-          <Container size="95%">
+          <Container size="80%" >
             <Button onClick={open} my={20} >
               Create Ticket
             </Button>
@@ -260,12 +377,10 @@ export default function Home() {
                 label="Title"
                 value={title}
                 mb={10}
-                // disabled
                 variant='filled'
-              // bg="white"
-              // onChange={(evnet) => {
-              //   setTitle(evnet.target.value)
-              // }}
+                onChange={(evnet) => {
+                  setTitle(evnet.target.value)
+                }}
               />
               <Textarea
                 placeholder="Description"
@@ -276,9 +391,9 @@ export default function Home() {
                 maxRows={4}
                 variant='filled'
                 value={description}
-              // onChange={(event) => {
-              //   setDescription(event.target.value)
-              // }}
+                onChange={(event) => {
+                  setDescription(event.target.value)
+                }}
               />
               <TextInput
                 placeholder="Contact"
@@ -286,9 +401,9 @@ export default function Home() {
                 mb={10}
                 variant='filled'
                 value={contact}
-              // onChange={(evnet) => {
-              //   setContact(evnet.target.value)
-              // }}
+                onChange={(evnet) => {
+                  setContact(evnet.target.value)
+                }}
               />
               <Select
                 label="Update Status"
@@ -307,31 +422,45 @@ export default function Home() {
             </Modal>
             <Grid grow gutter="lg" columns={12} style={{ display: 'flex', justifyContent: 'center' }}>
               <Grid.Col lg={12} xl={5}>
-                <Card shadow="sm" padding="lg" radius="lg" withBorder>
+                <Card shadow="sm" m={5} radius="lg" withBorder>
                   <Text ml={20} fw={900} mb={5} fz="xl" variant="gradient"
                     gradient={{ from: 'orange', to: 'yellow', deg: 90 }}
                     sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>PENDING</Text>
-                  <Container h={{ md:"10vh", lg: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
-                  <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
-                    <Table mt={15} highlightOnHover withColumnBorders style={{ fontFamily: 'Noto Sans Thai' }}>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Title</th>
-                          <th>Contact</th>
-                          <th>Create Time</th>
-                          <th>status</th>
-                          <th>view</th>
-                        </tr>
-                      </thead>
-                      <tbody>{rowsPending}</tbody>
-                    </Table>
-                  </MediaQuery>
-                  
-                  {/* <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-                  
-                  </MediaQuery> */}
+                  <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                    <Container h={{ md: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders style={{ fontFamily: 'Noto Sans Thai' }}>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Contact</th>
+                            <th>Create Time</th>
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsPending}</tbody>
+                      </Table>
                     </Container>
+                  </MediaQuery>
+
+                  <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+                    <Container h="20vh" style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders style={{ fontFamily: 'Noto Sans Thai' }}>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            {/* <th>Contact</th>
+                            <th>Create Time</th> */}
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsPending}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
                 </Card>
               </Grid.Col>
 
@@ -340,22 +469,43 @@ export default function Home() {
                   <Text ml={20} fw={900} fz="xl" variant="gradient"
                     gradient={{ from: 'blue', to: 'purple', deg: 90 }}
                     sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>ACCEPTED</Text>
-                  <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
-                    {/* <Table mt={15} highlightOnHover withColumnBorders>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Title</th>
-                          <th>Contact</th>
+
+                  <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                    <Container h={{ md: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Contact</th>
+                            <th>Create Time</th>
+                            <th>Update Time</th>
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsAccept}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
+                  <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+                    <Container h="20vh" style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            {/* <th>Contact</th>
                           <th>Create Time</th>
-                          <th>Update Time</th>
-                          <th>status</th>
-                          <th>view</th>
-                        </tr>
-                      </thead>
-                      <tbody>{rowsAccept}</tbody>
-                    </Table> */}
-                  </Container>
+                          <th>Update Time</th> */}
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsAccept}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
                 </Card>
               </Grid.Col>
 
@@ -364,22 +514,43 @@ export default function Home() {
                   <Text ml={20} fw={900} fz="xl" variant="gradient"
                     gradient={{ from: 'green', to: 'blue', deg: 90 }}
                     sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>RESOLVED</Text>
-                  <Container h={{ lg: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
-                    {/* <Table mt={15} highlightOnHover withColumnBorders>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Title</th>
-                          <th>Contact</th>
+
+                  <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                    <Container h={{ md: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Contact</th>
+                            <th>Create Time</th>
+                            <th>Update Time</th>
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsresolved}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
+                  <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+                    <Container h="20vh" style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            {/* <th>Contact</th>
                           <th>Create Time</th>
-                          <th>Update Time</th>
-                          <th>status</th>
-                          <th>view</th>
-                        </tr>
-                      </thead>
-                      <tbody>{rowsresolved}</tbody>
-                    </Table> */}
-                  </Container>
+                          <th>Update Time</th> */}
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsresolved}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
                 </Card>
               </Grid.Col>
 
@@ -388,22 +559,42 @@ export default function Home() {
                   <Text ml={20} fw={900} fz="xl" variant="gradient"
                     gradient={{ from: 'red', to: 'black', deg: 175 }}
                     sx={{ fontFamily: 'Greycliff CF, sans-serif' }}>REJECTED</Text>
-                  <Container h={{ lg: "10vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
-                    {/* <Table mt={15} highlightOnHover withColumnBorders>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Title</th>
-                          <th>Contact</th>
+                  <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
+                    <Container h={{ md: "20vh", xl: "30vh" }} style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Contact</th>
+                            <th>Create Time</th>
+                            <th>Update Time</th>
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsreject}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
+                  <MediaQuery largerThan="md" styles={{ display: 'none' }}>
+                    <Container h="20vh" style={{ overflowY: "auto" }}>
+                      <Table mt={15} highlightOnHover withColumnBorders>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            {/* <th>Contact</th>
                           <th>Create Time</th>
-                          <th>Update Time</th>
-                          <th>status</th>
-                          <th>view</th>
-                        </tr>
-                      </thead>
-                      <tbody>{rowsreject}</tbody>
-                    </Table> */}
-                  </Container>
+                          <th>Update Time</th> */}
+                            <th>status</th>
+                            <th>view</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rowsreject}</tbody>
+                      </Table>
+                    </Container>
+                  </MediaQuery>
                 </Card>
               </Grid.Col>
             </Grid>

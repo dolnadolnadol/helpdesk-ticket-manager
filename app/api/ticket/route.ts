@@ -1,4 +1,4 @@
-import executeQuery, { testDatabaseConnection } from "@/lib/db";
+import executeQuery from "@/lib/db";
 import { Iticket, UTicket } from "@/model/ticket/ticket";
 
 function authenticateRequest(request: Request) {
@@ -13,9 +13,9 @@ export async function GET(request: Request) {
     try {
         authenticateRequest(request);
         const result = await executeQuery({
-            query: 'SELECT * FROM ticket',
+            query: 'SELECT * FROM ticket ORDER BY status, Update_Timestamp DESC, Create_Timestamp desc',
         });
-        console.log(result);
+        // console.log(result);
         return new Response(JSON.stringify(result), {
             headers: {
                 "Content-Type": "application/json",

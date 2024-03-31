@@ -19,10 +19,11 @@ export default function NavbarTemp(props: ContentProps) {
             // backgroundColor: 'red',
             background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
             color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[8],
-            justifyContent: 'center',
-            display: 'flex',
+            // justifyContent: 'center',
+            // display: 'flex',
         },
       }}
+      navbarOffsetBreakpoint="sm"
       header={
         <Header height={{ base: 50, md: 70 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%'}}>
