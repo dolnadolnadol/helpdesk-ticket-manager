@@ -4,11 +4,10 @@ RUN groupadd -r app && useradd -r -g app app-user
 
 WORKDIR /app
 
-COPY package.json package-lock.json*
+COPY package*.json ./
 RUN npm install
+COPY . .
 RUN npm run build
-
-USER nextjs
 
 EXPOSE 3000
 

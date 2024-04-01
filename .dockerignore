@@ -1,4 +1,6 @@
 /node_modules
-next-env.d.ts
 .env*.local
 /.next/
+.git
+.gitignore
+/compose

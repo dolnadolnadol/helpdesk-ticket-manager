@@ -4,7 +4,7 @@ dotenv.config();
 
 export async function getTicket() {
     try {
-        const response = await fetch("http://localhost:3000/api/ticket",
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_IP}:${process.env.NEXT_PUBLIC_API_PORT}/api/ticket`,
         {
             method: 'GET',
             headers:{
@@ -27,7 +27,7 @@ export async function getTicket() {
 
 export async function getTicketById(id: number) {
     try {
-        const response = await fetch(`http://localhost:3000/api/ticket/${id}`,
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_IP}:${process.env.NEXT_PUBLIC_API_PORT}/api/ticket/${id}`,
         {
             method: 'GET',
             headers:{
@@ -49,7 +49,7 @@ export async function getTicketById(id: number) {
 
 export async function createTicket(ticketData : Iticket) {
     try {
-        const response = await fetch("http://localhost:3000/api/ticket", {
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_IP}:${process.env.NEXT_PUBLIC_API_PORT}/api/ticket`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export async function createTicket(ticketData : Iticket) {
 
 export async function updateTicket(ticketData : UTicket) {
     try {
-        const response = await fetch("http://localhost:3000/api/ticket", {
+        const response = await fetch(`http://${process.env.NEXT_PUBLIC_IP}:${process.env.NEXT_PUBLIC_API_PORT}/api/ticket`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
