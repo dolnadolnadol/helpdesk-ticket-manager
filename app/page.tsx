@@ -306,7 +306,7 @@ export default function Home() {
       status: status
     }
     try {
-      console.log('fomatdatte '+formatDate);
+      // console.log('fomatdatte '+formatDate);
       await updateTicket(ticket);
       await GetHello();
       closeedit();
