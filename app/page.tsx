@@ -267,6 +267,11 @@ export default function Home() {
   const GetHello = async () => {
     const response = await getTicket();
     setTicket(response);
+    settid(0);
+    setContact('');
+    setTitle('');
+    setDescription('');
+    setStatus('');
   }
   const GetTicketById = async (id: number) => {
     await getTicketById(id).then((response) => {
@@ -287,14 +292,13 @@ export default function Home() {
     }
     try {
       await createTicket(ticket);
-      // await GetHello();
-      await fetch('/')
+      await GetHello();
+      // await fetch('/')
       close();
     } catch (error) {
       console.error("Error creating ticket:", error);
     }
   }
-
   const UpdateTicket = async () => {
     const formatDate = generateDateTime();
     const ticket: UTicket = {
@@ -314,7 +318,6 @@ export default function Home() {
       console.error("Error creating ticket:", error);
     }
   }
-
   useEffect(() => {
     GetHello();
     setLoading(false);
