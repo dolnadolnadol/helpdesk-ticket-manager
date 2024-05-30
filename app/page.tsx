@@ -1,27 +1,36 @@
 'use client'
-import { Text, Table, Badge, Button, Modal, TextInput, Container, Select, SelectItem, useMantineTheme, Image, Grid, Textarea, Card, Box, MediaQuery } from '@mantine/core';
-import NavbarTemp from '@/components/common/navbar';
-import { useEffect, useState } from 'react';
-import { createTicket, getTicket, getTicketById, updateTicket } from '@/app/api/ticket/ticket'
-import { Iticket, Ticket, UTicket } from '@/model/ticket/ticket';
-import { useDisclosure } from '@mantine/hooks';
 import Loading from '@/components/common/loading/page';
+import NavbarTemp from '@/components/common/navbar';
+import { Iticket, Ticket, UTicket } from '@/model/ticket/ticket';
 import {
   generateDateTime,
 } from "@/util/utility-func";
+import { Badge, Box, Button, Card, Container, Grid, Image, MediaQuery, Modal, Select, SelectItem, Table, Text, Textarea, TextInput, useMantineTheme } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 export default function Home() {
   const theme = useMantineTheme();
   const [ticket, setTicket] = useState<Ticket[]>();
-  const [ticketEdit, setTicketEdit] = useState<Ticket>();
   const [opened, { open, close }] = useDisclosure(false);
   const [openedEdit, { open: openedit, close: closeedit }] = useDisclosure(false);
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [tid, settid] = useState<number>(0);
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [contact, setContact] = useState<string>('');
-  const [status, setStatus] = useState<string>('');
+  const [detail, setDetail] = useState({
+    id: 0,
+    title: "",
+    description: "",
+    contact: "",
+    status: ""
+  })
+
+  const onChange = (e: any) => {
+    const { name, value } = e.target;
+    setDetail({
+      ...detail,
+      [name]: value,
+    })
+  }
   const states: SelectItem[] = [
     { value: 'pending', label: 'Pending' },
     { value: 'accepted', label: 'Accepted' },
@@ -33,7 +42,7 @@ export default function Home() {
   const rowsPending = ticket && ticket.map((element) => {
     if (element.status === "pending") {
       return (
-        <>
+        <React.Fragment key={element.id}>
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
             <tr key={element.id}>
               <td>{element.id}</td>
@@ -56,7 +65,7 @@ export default function Home() {
                 <Badge variant="filled" color="yellow">{element.status}</Badge>
               </td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
@@ -70,34 +79,24 @@ export default function Home() {
                   <Text truncate lineClamp={2}>{element.title}</Text>
                 </Box>
               </td>
-              {/* <td>
-                <Box w={180}>
-                  <Text truncate>{element.contact}</Text>
-                </Box>
-              </td>
-              <td>
-                <Box>
-                  {new Date(element.Create_Timestamp).toLocaleString()}
-                </Box>
-              </td> */}
               <td>
                 <Badge variant="filled" color="yellow">{element.status}</Badge>
               </td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
             </tr>
           </MediaQuery>
-        </>
+        </React.Fragment>
       );
     }
   });
   const rowsAccept = ticket && ticket.map((element) => {
     if (element.status === "accepted") {
       return (
-        <>
+        <React.Fragment key={element.id}>
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
             <tr key={element.id}>
               <td>{element.id}</td>
@@ -116,7 +115,7 @@ export default function Home() {
               <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
               <td><Badge variant="filled" color="indigo">{element.status}</Badge></td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
@@ -130,29 +129,22 @@ export default function Home() {
                   <Text truncate>{element.title}</Text>
                 </Box>
               </td>
-              {/* <td>
-            <Box w={100}>
-              <Text truncate>{element.contact}</Text>
-            </Box>
-          </td>
-          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td> */}
               <td><Badge variant="filled" color="indigo">{element.status}</Badge></td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
             </tr>
           </MediaQuery>
-        </>
+        </React.Fragment>
       );
     }
   });
   const rowsresolved = ticket && ticket.map((element) => {
     if (element.status === "resolved") {
       return (
-        <>
+        <React.Fragment key={element.id}>
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
             <tr key={element.id}>
               <td>{element.id}</td>
@@ -171,7 +163,7 @@ export default function Home() {
               <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
               <td><Badge variant="filled" color="green">{element.status}</Badge></td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
@@ -185,30 +177,22 @@ export default function Home() {
                   <Text truncate >{element.title}</Text>
                 </Box>
               </td>
-
-              {/* <td>
-            <Box w={100}>
-              <Text truncate>{element.contact}</Text>
-            </Box>
-          </td>
-          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td> */}
               <td><Badge variant="filled" color="green">{element.status}</Badge></td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
             </tr>
           </MediaQuery>
-        </>
+        </React.Fragment>
       );
     }
   });
   const rowsreject = ticket && ticket.map((element) => {
     if (element.status === "rejected") {
       return (
-        <>
+        <React.Fragment key={element.id}>
           <MediaQuery smallerThan="md" styles={{ display: 'none' }}>
             <tr key={element.id}>
               <td>{element.id}</td>
@@ -226,7 +210,7 @@ export default function Home() {
               <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td>
               <td><Badge variant="filled" color="red">{element.status}</Badge></td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
@@ -240,61 +224,50 @@ export default function Home() {
                   <Text truncate >{element.title}</Text>
                 </Box>
               </td>
-
-              {/* <td>
-            <Box w={100}>
-              <Text truncate>{element.contact}</Text>
-            </Box>
-          </td>
-          <td>{new Date(element.Create_Timestamp).toLocaleString()}</td>
-          <td>{element.Update_Timestamp && new Date(element.Update_Timestamp).toLocaleString()}</td> */}
               <td><Badge variant="filled" color="red">{element.status}</Badge></td>
               <td>
-                <button onClick={() => showEdit(element.id)}>
+                <button onClick={() => showEdit(element)}>
                   <Image src='/see.png' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '25px', height: '25px' }}></Image>
                 </button>
               </td>
             </tr>
           </MediaQuery>
-        </>
+        </React.Fragment>
       );
     }
   });
-  const showEdit = async (id: number) => {
-    GetTicketById(id);
+  const showEdit = async (ticket: Ticket) => {
+    GetTicketById(ticket);
     openedit();
   }
   const GetHello = async () => {
-    const response = await getTicket();
-    setTicket(response);
-    settid(0);
-    setContact('');
-    setTitle('');
-    setDescription('');
-    setStatus('');
+    const response = await axios.get('/api/ticket');
+    if (!response.data.code) {
+      setTicket(response.data.result);
+    }
   }
-  const GetTicketById = async (id: number) => {
-    await getTicketById(id).then((response) => {
-      setTicketEdit(response);
-      settid(response.id);
-      setContact(response.contact);
-      setTitle(response.title);
-      setDescription(response.description);
-      setStatus(response.status);
-    })
+  const GetTicketById = async (ticket: Ticket) => {
+    setDetail(ticket);
   }
   const saveTicket = async () => {
     const ticket: Iticket = {
-      title: title,
-      description: description,
-      contact: contact,
+      title: detail.title,
+      description: detail.description,
+      contact: detail.contact,
       status: "pending"
     }
     try {
-      await createTicket(ticket);
+      await axios.post('/api/ticket/', ticket);
+      setDetail({
+        id: 0,
+        title: "",
+        description: "",
+        contact: "",
+        status: ""
+      })
       await GetHello();
-      // await fetch('/')
       close();
+
     } catch (error) {
       console.error("Error creating ticket:", error);
     }
@@ -302,20 +275,26 @@ export default function Home() {
   const UpdateTicket = async () => {
     const formatDate = generateDateTime();
     const ticket: UTicket = {
-      id: tid,
-      title: title,
-      description: description,
-      contact: contact,
+      title: detail.title,
+      description: detail.description,
+      contact: detail.contact,
       update_Timestamp: formatDate,
-      status: status
+      status: detail.status
     }
     try {
-      // console.log('fomatdatte '+formatDate);
-      await updateTicket(ticket);
+      console.log(ticket)
+      await axios.put(`/api/ticket/${detail.id}`, ticket);
       await GetHello();
       closeedit();
+      setDetail({
+        id: 0,
+        title: "",
+        description: "",
+        contact: "",
+        status: ""
+      })
     } catch (error) {
-      console.error("Error creating ticket:", error);
+      console.error("Error updating ticket:", error);
     }
   }
   useEffect(() => {
@@ -334,15 +313,15 @@ export default function Home() {
             </Button>
             <Modal opened={opened} onClose={close} title="Create Ticket" centered>
               <TextInput
+                name='title'
                 placeholder="Title"
                 label="Title"
                 mb={10}
                 withAsterisk
-                onChange={(evnet) => {
-                  setTitle(evnet.target.value)
-                }}
+                onChange={onChange}
               />
               <Textarea
+                name='description'
                 placeholder="Description"
                 label="Description"
                 withAsterisk
@@ -350,18 +329,15 @@ export default function Home() {
                 mb={10}
                 minRows={2}
                 maxRows={4}
-                onChange={(evnet) => {
-                  setDescription(evnet.target.value)
-                }}
+                onChange={onChange}
               />
               <TextInput
+                name='contact'
                 placeholder="example@dolphin.com"
                 label="Contact"
                 withAsterisk
                 mb={10}
-                onChange={(evnet) => {
-                  setContact(evnet.target.value)
-                }}
+                onChange={onChange}
               />
               <Button mt={15} onClick={saveTicket}>
                 SAVE
@@ -376,16 +352,16 @@ export default function Home() {
               centered
             >
               <TextInput
+                name="title"
                 placeholder="Title"
                 label="Title"
-                value={title}
+                value={detail.title}
                 mb={10}
                 variant='filled'
-                onChange={(evnet) => {
-                  setTitle(evnet.target.value)
-                }}
+                onChange={onChange}
               />
               <Textarea
+                name='description'
                 placeholder="Description"
                 label="Description"
                 autosize
@@ -393,31 +369,24 @@ export default function Home() {
                 minRows={2}
                 maxRows={4}
                 variant='filled'
-                value={description}
-                onChange={(event) => {
-                  setDescription(event.target.value)
-                }}
+                value={detail.description}
+                onChange={onChange}
               />
               <TextInput
+                name='contact'
                 placeholder="Contact"
                 label="Contact"
                 mb={10}
                 variant='filled'
-                value={contact}
-                onChange={(evnet) => {
-                  setContact(evnet.target.value)
-                }}
+                value={detail.contact}
+                onChange={onChange}
               />
               <Select
+                name='status'
                 label="Update Status"
-                placeholder={ticketEdit?.status}
-                value={status}
+                value={detail.status}
                 data={states}
-                onChange={(selectedStatus) => {
-                  if (typeof selectedStatus === 'string') {
-                    setStatus(selectedStatus);
-                  }
-                }}
+                onChange={(value) => onChange({ target: { name: 'status', value } })}
               />
               <Button mt={15} onClick={UpdateTicket}>
                 SAVE
@@ -454,8 +423,6 @@ export default function Home() {
                           <tr>
                             <th>#</th>
                             <th>Title</th>
-                            {/* <th>Contact</th>
-                            <th>Create Time</th> */}
                             <th>status</th>
                             <th>view</th>
                           </tr>
@@ -498,9 +465,6 @@ export default function Home() {
                           <tr>
                             <th>#</th>
                             <th>Title</th>
-                            {/* <th>Contact</th>
-                          <th>Create Time</th>
-                          <th>Update Time</th> */}
                             <th>status</th>
                             <th>view</th>
                           </tr>
@@ -543,9 +507,6 @@ export default function Home() {
                           <tr>
                             <th>#</th>
                             <th>Title</th>
-                            {/* <th>Contact</th>
-                          <th>Create Time</th>
-                          <th>Update Time</th> */}
                             <th>status</th>
                             <th>view</th>
                           </tr>
@@ -587,9 +548,6 @@ export default function Home() {
                           <tr>
                             <th>#</th>
                             <th>Title</th>
-                            {/* <th>Contact</th>
-                          <th>Create Time</th>
-                          <th>Update Time</th> */}
                             <th>status</th>
                             <th>view</th>
                           </tr>
