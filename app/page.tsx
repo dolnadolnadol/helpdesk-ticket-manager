@@ -242,8 +242,8 @@ export default function Home() {
   }
   const GetHello = async () => {
     const response = await axios.get('/api/ticket');
-    if (!response.data.code) {
-      setTicket(response.data.result);
+    if (response.data) {
+      setTicket(response.data);
     }
   }
   const GetTicketById = async (ticket: Ticket) => {
@@ -273,7 +273,8 @@ export default function Home() {
     }
   }
   const UpdateTicket = async () => {
-    const formatDate = generateDateTime();
+    const formatDate = await generateDateTime();
+    console.log('format', formatDate)
     const ticket: UTicket = {
       title: detail.title,
       description: detail.description,
